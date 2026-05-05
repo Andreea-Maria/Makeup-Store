@@ -10,8 +10,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -20,10 +22,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.makeupstoreapp.data.model.Product
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import com.example.makeupstoreapp.viewmodel.FavoritesViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -36,8 +34,12 @@ fun ProductDetailsScreen(
     onBack: () -> Unit,
     onAddToCart: (Product) -> Unit,
     isAdmin: Boolean,
-    onEditProduct: (Product) -> Unit
+    onEditProduct: (Product) -> Unit,
+    onShowMessage: (String) -> Unit
 ) {
+    val favoriteProducts by favoritesViewModel.favoriteProducts.collectAsState()
+    val isFavorite = favoriteProducts.any { it.id == product.id }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -61,13 +63,14 @@ fun ProductDetailsScreen(
         ) {
             Card(
                 shape = RoundedCornerShape(28.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(190.dp)
             ) {
                 Box(modifier = Modifier.fillMaxSize()) {
-
                     AsyncImage(
                         model = product.imageUrl,
                         contentDescription = product.name,
@@ -76,9 +79,6 @@ fun ProductDetailsScreen(
                             .padding(16.dp),
                         contentScale = ContentScale.Fit
                     )
-
-                    val favoriteProducts by favoritesViewModel.favoriteProducts.collectAsState()
-                    val isFavorite = favoriteProducts.any { it.id == product.id }
 
                     Icon(
                         imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
@@ -89,6 +89,14 @@ fun ProductDetailsScreen(
                             .padding(12.dp)
                             .clickable {
                                 favoritesViewModel.toggleFavorite(product)
+
+                                onShowMessage(
+                                    if (isFavorite) {
+                                        "Produs eliminat din favorite"
+                                    } else {
+                                        "Produs adăugat la favorite"
+                                    }
+                                )
                             }
                     )
                 }
@@ -140,7 +148,11 @@ fun ProductDetailsScreen(
                                 .background(parseColor(variant.color))
                                 .border(
                                     width = if (variant.id == product.id) 3.dp else 1.dp,
-                                    color = if (variant.id == product.id) Color.Black else Color.LightGray,
+                                    color = if (variant.id == product.id) {
+                                        MaterialTheme.colorScheme.onBackground
+                                    } else {
+                                        Color.LightGray
+                                    },
                                     shape = CircleShape
                                 )
                                 .clickable {
@@ -176,8 +188,16 @@ fun ProductDetailsScreen(
             Spacer(Modifier.height(8.dp))
 
             Text(
-                text = if (product.stock > 0) "Stoc disponibil: ${product.stock}" else "Indisponibil",
-                color = if (product.stock > 0) MaterialTheme.colorScheme.onBackground else Color(0xFFB00020),
+                text = if (product.stock > 0) {
+                    "Stoc disponibil: ${product.stock}"
+                } else {
+                    "Indisponibil"
+                },
+                color = if (product.stock > 0) {
+                    MaterialTheme.colorScheme.onBackground
+                } else {
+                    Color(0xFFB00020)
+                },
                 style = MaterialTheme.typography.bodyMedium
             )
 
@@ -186,6 +206,7 @@ fun ProductDetailsScreen(
             Button(
                 onClick = {
                     onAddToCart(product)
+                    onShowMessage("Produs adăugat în coș")
                 },
                 enabled = product.stock > 0,
                 modifier = Modifier

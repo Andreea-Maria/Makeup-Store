@@ -40,6 +40,9 @@ import androidx.compose.material.icons.outlined.Star
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
+import androidx.compose.material3.SnackbarDuration
 
 val primaryColor = Color(0xFFFFC1CC)
 val backgroundColor = Color(0xFFFFF5F7)
@@ -63,11 +66,14 @@ fun HomeScreen(
     val productViewModel: ProductViewModel = viewModel()
     val cartViewModel: CartViewModel = viewModel()
     val favoritesViewModel: FavoritesViewModel = viewModel()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
     val cartItems by cartViewModel.cartItems.collectAsState()
     val cartCount = cartItems.sumOf { it.quantity }
     val products by productViewModel.products.collectAsState()
     val auth = FirebaseAuth.getInstance()
     val db = FirebaseFirestore.getInstance()
+
 
     LaunchedEffect(Unit) {
         val userId = auth.currentUser?.uid
@@ -89,6 +95,9 @@ fun HomeScreen(
     }
 
     Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
         topBar = {
             TopAppBar(
                 title = { Text("Makeup Store") },
@@ -191,6 +200,14 @@ fun HomeScreen(
                             favoritesViewModel = favoritesViewModel,
                             onProductClick = { product ->
                                 selectedProduct = product
+                            },
+                            onShowMessage = { message ->
+                                kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
+                                    snackbarHostState.showSnackbar(
+                                        message = message,
+                                        duration = SnackbarDuration.Short
+                                    )
+                                }
                             }
                         )
                     } else {
@@ -213,6 +230,14 @@ fun HomeScreen(
                             isAdmin = isAdmin,
                             onEditProduct = { product ->
                                 productToEdit = product
+                            },
+                            onShowMessage = { message ->
+                                coroutineScope.launch {
+                                    snackbarHostState.showSnackbar(
+                                        message = message,
+                                        duration = SnackbarDuration.Short
+                                    )
+                                }
                             }
                         )
                     }
@@ -300,7 +325,8 @@ fun HomeScreen(
 fun HomeContent(
     productViewModel: ProductViewModel,
     favoritesViewModel: FavoritesViewModel,
-    onProductClick: (Product) -> Unit
+    onProductClick: (Product) -> Unit,
+    onShowMessage: (String) -> Unit
 ) {
     val products by productViewModel.products.collectAsState()
     val isLoading by productViewModel.isLoading.collectAsState()
@@ -463,7 +489,8 @@ fun HomeContent(
                         ProductCard(
                             product = product,
                             onClick = { onProductClick(product) },
-                            favoritesViewModel = favoritesViewModel
+                            favoritesViewModel = favoritesViewModel,
+                            onShowMessage = onShowMessage
                         )
                     }
                 }
@@ -496,12 +523,18 @@ fun CategoryMenuGroup(
 fun ProductCard(
     product: Product,
     onClick: () -> Unit,
-    favoritesViewModel: FavoritesViewModel
+    favoritesViewModel: FavoritesViewModel,
+    onShowMessage: (String) -> Unit
 ) {
+    val favoriteProducts by favoritesViewModel.favoriteProducts.collectAsState()
+    val isFavorite = favoriteProducts.any { it.id == product.id }
+
     Card(
         shape = RoundedCornerShape(24.dp),
         elevation = CardDefaults.cardElevation(6.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
         modifier = Modifier
             .fillMaxWidth()
             .height(240.dp)
@@ -528,9 +561,6 @@ fun ProductCard(
                     contentScale = ContentScale.Fit
                 )
 
-                val favoriteProducts by favoritesViewModel.favoriteProducts.collectAsState()
-                val isFavorite = favoriteProducts.any { it.id == product.id }
-
                 Icon(
                     imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                     contentDescription = "Favorite",
@@ -540,6 +570,14 @@ fun ProductCard(
                         .padding(8.dp)
                         .clickable {
                             favoritesViewModel.toggleFavorite(product)
+
+                            onShowMessage(
+                                if (isFavorite) {
+                                    "Produs eliminat din favorite"
+                                } else {
+                                    "Produs adăugat la favorite"
+                                }
+                            )
                         }
                 )
 
@@ -579,9 +617,6 @@ fun ProductCard(
                 style = MaterialTheme.typography.titleSmall,
                 color = Color(0xFFB85C7A)
             )
-
-            Spacer(Modifier.height(8.dp))
-
         }
     }
 }
@@ -632,7 +667,8 @@ fun SectionTitle(text: String) {
 fun HorizontalProducts(
     products: List<Product>,
     favoritesViewModel: FavoritesViewModel,
-    onClick: (Product) -> Unit
+    onClick: (Product) -> Unit,
+    onShowMessage: (String) -> Unit
 ) {
     if (products.isEmpty()) {
         Text(
@@ -648,7 +684,8 @@ fun HorizontalProducts(
                     ProductCard(
                         product = product,
                         onClick = { onClick(product) },
-                        favoritesViewModel = favoritesViewModel
+                        favoritesViewModel = favoritesViewModel,
+                        onShowMessage = onShowMessage
                     )
                 }
             }

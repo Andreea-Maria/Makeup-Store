@@ -76,7 +76,8 @@ fun FavoritesScreen(
                         ProductCard(
                             product = product,
                             onClick = { onProductClick(product) },
-                            favoritesViewModel = favoritesViewModel
+                            favoritesViewModel = favoritesViewModel,
+                            onShowMessage = {}
                         )
                     }
                 }
