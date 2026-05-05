@@ -55,6 +55,7 @@ fun HomeScreen(
     var showFavorites by remember { mutableStateOf(false) }
     var showOrders by remember { mutableStateOf(false) }
     var showCheckout by remember { mutableStateOf(false) }
+    var showOrderConfirmation by remember { mutableStateOf(false) }
     var showAddProduct by remember { mutableStateOf(false) }
     var isAdmin by remember { mutableStateOf(false) }
     var productToEdit by remember { mutableStateOf<Product?>(null) }
@@ -218,23 +219,40 @@ fun HomeScreen(
                 }
 
                 1 -> {
-                    if (showCheckout) {
-                        CheckoutScreen(
-                            cartViewModel = cartViewModel,
-                            onBack = { showCheckout = false },
-                            onOrderPlaced = {
-                                showCheckout = false
-                                showOrders = true
-                                selectedTab = 3
-                            }
-                        )
-                    } else {
-                        CartScreen(
-                            cartViewModel = cartViewModel,
-                            onCheckoutClick = {
-                                showCheckout = true
-                            }
-                        )
+                    when {
+                        showOrderConfirmation -> {
+                            OrderConfirmationScreen(
+                                onGoToOrders = {
+                                    showOrderConfirmation = false
+                                    showOrders = true
+                                    selectedTab = 3
+                                },
+                                onGoToHome = {
+                                    showOrderConfirmation = false
+                                    selectedTab = 0
+                                }
+                            )
+                        }
+
+                        showCheckout -> {
+                            CheckoutScreen(
+                                cartViewModel = cartViewModel,
+                                onBack = { showCheckout = false },
+                                onOrderPlaced = {
+                                    showCheckout = false
+                                    showOrderConfirmation = true
+                                }
+                            )
+                        }
+
+                        else -> {
+                            CartScreen(
+                                cartViewModel = cartViewModel,
+                                onCheckoutClick = {
+                                    showCheckout = true
+                                }
+                            )
+                        }
                     }
                 }
                 2 -> QRScreen(cartViewModel)
