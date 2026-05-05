@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "929839524964",
+    "project_id": "makeupstoreapp-3e17f",
+    "storage_bucket": "makeupstoreapp-3e17f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:929839524964:android:f0cc69620d4b8415684371",
+        "android_client_info": {
+          "package_name": "com.example.makeupstoreapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5nZklQsrdHMVsXumSNDDXmykiEw2BEKc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
