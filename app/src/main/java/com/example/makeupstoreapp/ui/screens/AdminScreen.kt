@@ -3,6 +3,7 @@ package com.example.makeupstoreapp.ui.screens
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -10,10 +11,12 @@ import androidx.compose.ui.unit.dp
 import com.example.makeupstoreapp.data.model.Product
 import com.google.firebase.firestore.FirebaseFirestore
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
 
 @Composable
 fun AdminScreen(
-    onAddProductClick: () -> Unit
+    onAddProductClick: () -> Unit,
+    onAddDiscountClick: () -> Unit
 ) {
     val db = FirebaseFirestore.getInstance()
     var products by remember { mutableStateOf<List<Product>>(emptyList()) }
@@ -55,6 +58,20 @@ fun AdminScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Adaugă produs nou")
+        }
+
+        Spacer(Modifier.height(10.dp))
+
+        Button(
+            onClick = onAddDiscountClick,
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            ),
+            shape = RoundedCornerShape(18.dp)
+        ) {
+            Text("Adaugă cod reducere")
         }
 
         Spacer(Modifier.height(16.dp))

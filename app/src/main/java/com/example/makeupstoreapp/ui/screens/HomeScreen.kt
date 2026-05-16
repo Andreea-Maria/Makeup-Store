@@ -60,6 +60,7 @@ fun HomeScreen(
     var showCheckout by remember { mutableStateOf(false) }
     var showOrderConfirmation by remember { mutableStateOf(false) }
     var showAddProduct by remember { mutableStateOf(false) }
+    var showAddDiscount by remember { mutableStateOf(false) }
     var isAdmin by remember { mutableStateOf(false) }
     var productToEdit by remember { mutableStateOf<Product?>(null) }
 
@@ -305,14 +306,20 @@ fun HomeScreen(
                     }
                 }
                 4 -> {
-                    if (showAddProduct) {
-                        AddProductScreen(
+                    when {
+                        showAddProduct -> AddProductScreen(
                             onBack = { showAddProduct = false },
                             onProductSaved = { showAddProduct = false }
                         )
-                    } else {
-                        AdminScreen(
-                            onAddProductClick = { showAddProduct = true }
+
+                        showAddDiscount -> AddDiscountScreen(
+                            onBack = { showAddDiscount = false },
+                            onDiscountSaved = { showAddDiscount = false }
+                        )
+
+                        else -> AdminScreen(
+                            onAddProductClick = { showAddProduct = true },
+                            onAddDiscountClick = { showAddDiscount = true }
                         )
                     }
                 }

@@ -66,7 +66,7 @@ fun QRScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Reduceri QR",
+            text = "Scaneaza un cod QR de reducere",
             style = MaterialTheme.typography.headlineMedium
         )
 
@@ -91,7 +91,7 @@ fun QRScreen(
         ) {
             Icon(Icons.Default.QrCodeScanner, contentDescription = "QR")
             Spacer(Modifier.width(8.dp))
-            Text("Scanează cod QR")
+            Text("Scanează reducerea")
         }
 
         Spacer(Modifier.height(20.dp))
