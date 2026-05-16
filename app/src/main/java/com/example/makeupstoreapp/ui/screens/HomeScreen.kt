@@ -43,6 +43,11 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.launch
 import androidx.compose.material3.SnackbarDuration
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
+import com.example.makeupstoreapp.R
+import androidx.compose.ui.modifier.modifierLocalOf
+import androidx.compose.ui.res.painterResource
 
 val primaryColor = Color(0xFFFFC1CC)
 val backgroundColor = Color(0xFFFFF5F7)
@@ -75,6 +80,8 @@ fun HomeScreen(
     val auth = FirebaseAuth.getInstance()
     val db = FirebaseFirestore.getInstance()
 
+    val isDarkMode by themeViewModel.isDarkMode.collectAsState()
+
 
     LaunchedEffect(Unit) {
         val userId = auth.currentUser?.uid
@@ -101,7 +108,24 @@ fun HomeScreen(
         },
         topBar = {
             TopAppBar(
-                title = { Text("Makeup Store") },
+                title = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Image(
+                            painter = painterResource(
+                                id = if (isDarkMode) R.drawable.logo_dark else R.drawable.logo_light
+                            ),
+                            contentDescription = "Logo",
+                            modifier = Modifier.size(60.dp),
+                            contentScale = ContentScale.Fit
+                        )
+
+                        Spacer(Modifier.width(8.dp))
+
+                        Text("Makeup Store")
+                    }
+                },
                 actions = {
                     TextButton(onClick = onLogout) {
                         Text("Logout", color = primaryColor)
