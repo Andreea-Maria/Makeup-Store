@@ -15,7 +15,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.example.makeupstoreapp.viewmodel.CartViewModel
 
 @Composable
@@ -68,12 +70,22 @@ fun CartScreen(
                         ) {
                             Box(
                                 modifier = Modifier
-                                    .size(44.dp)
+                                    .size(48.dp)
                                     .background(
-                                        parseColor(item.product.color).copy(alpha = 0.25f),
-                                        RoundedCornerShape(14.dp)
-                                    )
-                            )
+                                        parseColor(item.product.color).copy(alpha = 0.12f),
+                                        RoundedCornerShape(12.dp)
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                AsyncImage(
+                                    model = item.product.imageUrl,
+                                    contentDescription = item.product.name,
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(4.dp),
+                                    contentScale = ContentScale.Fit
+                                )
+                            }
 
                             Spacer(Modifier.width(12.dp))
 
