@@ -46,7 +46,7 @@ fun EditProductScreen(
         "Ochi" -> listOf("Mascara", "Eyeliner", "Fard", "Gene")
         "Buze" -> listOf("Ruj mat", "Ruj lucios", "Gloss", "Creion de buze")
         "Păr" -> listOf("Șampon", "Mască / balsam", "Leave-in", "Accesorii", "Produse de îngrijire")
-        "Parfumuri" -> listOf("Parfumuri")
+        "Parfumuri" -> listOf("Bărbați", "Femei")
         else -> emptyList()
     }
 

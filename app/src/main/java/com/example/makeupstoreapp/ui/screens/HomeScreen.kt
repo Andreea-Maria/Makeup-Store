@@ -456,7 +456,7 @@ fun HomeContent(
                         showMenu = false
                     }
 
-                    CategoryMenuGroup("Buze", listOf("Ruj mat", "Ruj lucios", "Gloss", "Creion de buze")) {
+                    CategoryMenuGroup("Buze", listOf("Ruj mat", "Gloss", "Creion de buze")) {
                         selectedFilter = it
                         showMenu = false
                     }
@@ -466,13 +466,13 @@ fun HomeContent(
                         showMenu = false
                     }
 
-                    DropdownMenuItem(
-                        text = { Text("Parfumuri") },
-                        onClick = {
-                            selectedFilter = "Parfumuri"
-                            showMenu = false
-                        }
-                    )
+                    CategoryMenuGroup(
+                        "Parfumuri",
+                        listOf("Bărbați", "Femei")
+                    ) {
+                        selectedFilter = it
+                        showMenu = false
+                    }
                 }
             }
 

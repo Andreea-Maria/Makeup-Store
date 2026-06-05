@@ -43,13 +43,13 @@ fun AddProductScreen(
         "Ochi" -> listOf("Mascara", "Eyeliner", "Fard", "Gene")
         "Buze" -> listOf("Ruj mat", "Gloss", "Creion de buze")
         "Păr" -> listOf("Șampon", "Mască / balsam", "Leave-in", "Accesorii", "Produse de îngrijire")
-        "Parfumuri" -> listOf("Parfumuri")
+        "Parfumuri" -> listOf("Bărbați", "Femei")
         else -> emptyList()
     }
 
     val usesQuantity = category == "Parfumuri" || category == "Păr"
 
-    val hideVariants = subcategory == "Accesorii" || subcategory == "Gene"
+    val hideVariants = subcategory == "Accesorii" || subcategory == "Gene" || subcategory == "Skincare"
 
     LaunchedEffect(category) {
         subcategory = subcategories.firstOrNull() ?: ""

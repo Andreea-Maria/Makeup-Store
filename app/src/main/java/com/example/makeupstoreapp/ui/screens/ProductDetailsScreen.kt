@@ -124,7 +124,8 @@ fun ProductDetailsScreen(
 
             val hideVariants =
                 product.subcategory == "Accesorii" ||
-                        product.subcategory == "Gene"
+                        product.subcategory == "Gene" ||
+                        product.subcategory == "Skincare"
 
             if (product.shadeName.isNotEmpty() && !hideVariants) {
                 Spacer(Modifier.height(14.dp))
