@@ -39,6 +39,7 @@ fun EditProductScreen(
     var isOffer by remember { mutableStateOf(product.isOffer) }
     var message by remember { mutableStateOf("") }
     var attemptedSave by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
 
     val subcategories = when (category) {
         "Față" -> listOf("Fond de ten", "Pudră", "Concealer", "Contouring", "Iluminatoare", "Skincare")
@@ -274,6 +275,54 @@ fun EditProductScreen(
                     .height(52.dp)
             ) {
                 Text("Salvează modificările")
+            }
+
+            Spacer(Modifier.height(12.dp))
+
+            OutlinedButton(
+                onClick = {
+                    showDeleteDialog = true
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = MaterialTheme.colorScheme.error
+                )
+            ) {
+                Text("Șterge produs")
+            }
+
+            if (showDeleteDialog) {
+                AlertDialog(
+                    onDismissRequest = { showDeleteDialog = false },
+                    title = { Text("Ștergere produs") },
+                    text = { Text("Sigur vrei să ștergi acest produs? Acțiunea nu poate fi anulată.") },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                showDeleteDialog = false
+
+                                db.collection("products")
+                                    .document(product.id)
+                                    .delete()
+                                    .addOnSuccessListener {
+                                        onProductUpdated()
+                                    }
+                                    .addOnFailureListener {
+                                        message = "Produsul nu a putut fi șters."
+                                    }
+                            }
+                        ) {
+                            Text("Șterge", color = MaterialTheme.colorScheme.error)
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showDeleteDialog = false }) {
+                            Text("Anulează")
+                        }
+                    }
+                )
             }
 
             if (message.isNotEmpty()) {
