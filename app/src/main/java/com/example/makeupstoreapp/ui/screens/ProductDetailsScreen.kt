@@ -1,5 +1,6 @@
 package com.example.makeupstoreapp.ui.screens
 
+import android.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -120,8 +121,13 @@ fun ProductDetailsScreen(
             if (product.shadeName.isNotEmpty()) {
                 Spacer(Modifier.height(14.dp))
 
+                val label = when (product.category) {
+                    "Parfumuri", "Păr" -> "Cantitate"
+                    else -> "Nuanță"
+                }
+
                 Text(
-                    text = "Nuanță: ${product.shadeName}",
+                    text = "$label: ${product.shadeName}",
                     style = MaterialTheme.typography.titleMedium
                 )
             }
@@ -130,8 +136,14 @@ fun ProductDetailsScreen(
 
             if (variants.isNotEmpty()) {
                 Text(
-                    text = "Alege nuanța",
-                    style = MaterialTheme.typography.titleMedium
+                    text = if (
+                        product.category == "Parfumuri" ||
+                        product.category == "Păr"
+                    ) {
+                        "Alege cantitatea"
+                    } else {
+                        "Alege nuanța"
+                    }
                 )
 
                 Spacer(Modifier.height(10.dp))
@@ -140,25 +152,48 @@ fun ProductDetailsScreen(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    val usesQuantity = product.category == "Parfumuri" || product.category == "Păr"
+
                     variants.forEach { variant ->
-                        Box(
-                            modifier = Modifier
-                                .size(42.dp)
-                                .clip(CircleShape)
-                                .background(parseColor(variant.color))
-                                .border(
-                                    width = if (variant.id == product.id) 3.dp else 1.dp,
-                                    color = if (variant.id == product.id) {
-                                        MaterialTheme.colorScheme.onBackground
-                                    } else {
-                                        Color.LightGray
-                                    },
-                                    shape = CircleShape
-                                )
-                                .clickable {
+                        if (usesQuantity) {
+                            Surface(
+                                shape = RoundedCornerShape(50),
+                                color = if (variant.id == product.id) {
+                                    MaterialTheme.colorScheme.primary
+                                } else {
+                                    MaterialTheme.colorScheme.surface
+                                },
+                                border = ButtonDefaults.outlinedButtonBorder,
+                                modifier = Modifier.clickable {
                                     onVariantSelected(variant)
                                 }
-                        )
+                            ) {
+                                Text(
+                                    text = variant.shadeName,
+                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+                        } else {
+                            Box(
+                                modifier = Modifier
+                                    .size(42.dp)
+                                    .clip(CircleShape)
+                                    .background(parseColor(variant.color))
+                                    .border(
+                                        width = if (variant.id == product.id) 3.dp else 1.dp,
+                                        color = if (variant.id == product.id) {
+                                            MaterialTheme.colorScheme.onBackground
+                                        } else {
+                                            Color.LightGray
+                                        },
+                                        shape = CircleShape
+                                    )
+                                    .clickable {
+                                        onVariantSelected(variant)
+                                    }
+                            )
+                        }
                     }
                 }
             }

@@ -49,6 +49,8 @@ fun EditProductScreen(
         else -> emptyList()
     }
 
+    val usesQuantity = category == "Parfumuri" || category == "Păr"
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -130,7 +132,7 @@ fun EditProductScreen(
             OutlinedTextField(
                 value = shadeName,
                 onValueChange = { shadeName = it },
-                label = { Text("Nume nuanță") },
+                label = { Text(if (usesQuantity) "Cantitate (ml)" else "Nume nuanță") },
                 isError = attemptedSave && shadeName.isBlank(),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -157,14 +159,17 @@ fun EditProductScreen(
 
             Spacer(Modifier.height(10.dp))
 
-            OutlinedTextField(
-                value = color,
-                onValueChange = { color = it },
-                label = { Text("Culoare HEX") },
-                modifier = Modifier.fillMaxWidth()
-            )
 
-            Spacer(Modifier.height(10.dp))
+            if (!usesQuantity) {
+                OutlinedTextField(
+                    value = color,
+                    onValueChange = { color = it },
+                    label = { Text("Culoare HEX") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(Modifier.height(10.dp))
+            }
 
             OutlinedTextField(
                 value = rating,
@@ -247,7 +252,7 @@ fun EditProductScreen(
                         "price" to (price.toDoubleOrNull() ?: 0.0),
                         "description" to description,
                         "imageUrl" to imageUrl,
-                        "color" to color,
+                        "color" to if(usesQuantity) "#FFFFFF" else color,
                         "isPopular" to isPopular,
                         "isOffer" to isOffer,
                         "rating" to (rating.toDoubleOrNull() ?: 0.0),

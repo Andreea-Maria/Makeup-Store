@@ -41,11 +41,13 @@ fun AddProductScreen(
     val subcategories = when (category) {
         "Față" -> listOf("Fond de ten", "Pudră", "Concealer", "Contouring", "Iluminatoare", "Skincare")
         "Ochi" -> listOf("Mascara", "Eyeliner", "Fard", "Gene")
-        "Buze" -> listOf("Ruj mat", "Ruj lucios", "Gloss", "Creion de buze")
+        "Buze" -> listOf("Ruj mat", "Gloss", "Creion de buze")
         "Păr" -> listOf("Șampon", "Mască / balsam", "Leave-in", "Accesorii", "Produse de îngrijire")
         "Parfumuri" -> listOf("Parfumuri")
         else -> emptyList()
     }
+
+    val usesQuantity = category == "Parfumuri" || category == "Păr"
 
     LaunchedEffect(category) {
         subcategory = subcategories.firstOrNull() ?: ""
@@ -151,13 +153,15 @@ fun AddProductScreen(
             }
             Spacer(Modifier.height(10.dp))
 
-            OutlinedTextField(
-                value = color,
-                onValueChange = { color = it },
-                label = { Text("Culoare HEX pentru nuanță") },
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(Modifier.height(10.dp))
+            if (!usesQuantity) {
+                OutlinedTextField(
+                    value = color,
+                    onValueChange = { color = it },
+                    label = { Text("Culoare HEX pentru nuanță") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(Modifier.height(10.dp))
+            }
 
             OutlinedTextField(
                 value = rating,
@@ -195,7 +199,7 @@ fun AddProductScreen(
             OutlinedTextField(
                 value = shadeName,
                 onValueChange = { shadeName = it },
-                label = { Text("Nume nuanță") },
+                label = { Text(if (usesQuantity) "Cantitate (ml)" else "Nume nuanță") },
                 isError = attemptedSave && shadeName.isBlank(),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -250,7 +254,7 @@ fun AddProductScreen(
                         "price" to (price.toDoubleOrNull() ?: 0.0),
                         "description" to description,
                         "imageUrl" to imageUrl,
-                        "color" to color,
+                        "color" to if (usesQuantity) "#FFFFFF" else color,
                         "isPopular" to isPopular,
                         "isOffer" to isOffer,
                         "rating" to (rating.toDoubleOrNull() ?: 0.0),
