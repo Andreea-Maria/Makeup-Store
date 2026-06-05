@@ -118,23 +118,30 @@ fun ProductDetailsScreen(
                 color = Color.Gray
             )
 
-            if (product.shadeName.isNotEmpty()) {
+            val usesQuantity =
+                product.category == "Parfumuri" ||
+                        product.category == "Păr"
+
+            val hideVariants =
+                product.subcategory == "Accesorii" ||
+                        product.subcategory == "Gene"
+
+            if (product.shadeName.isNotEmpty() && !hideVariants) {
                 Spacer(Modifier.height(14.dp))
 
-                val label = when (product.category) {
-                    "Parfumuri", "Păr" -> "Cantitate"
-                    else -> "Nuanță"
-                }
-
                 Text(
-                    text = "$label: ${product.shadeName}",
+                    text = if (usesQuantity) {
+                        "Cantitate: ${product.shadeName}"
+                    } else {
+                        "Nuanță: ${product.shadeName}"
+                    },
                     style = MaterialTheme.typography.titleMedium
                 )
             }
 
             Spacer(Modifier.height(18.dp))
 
-            if (variants.isNotEmpty()) {
+            if (variants.isNotEmpty() && !hideVariants) {
                 Text(
                     text = if (
                         product.category == "Parfumuri" ||
@@ -152,7 +159,6 @@ fun ProductDetailsScreen(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    val usesQuantity = product.category == "Parfumuri" || product.category == "Păr"
 
                     variants.forEach { variant ->
                         if (usesQuantity) {

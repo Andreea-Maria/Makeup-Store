@@ -49,6 +49,8 @@ fun AddProductScreen(
 
     val usesQuantity = category == "Parfumuri" || category == "Păr"
 
+    val hideVariants = subcategory == "Accesorii" || subcategory == "Gene"
+
     LaunchedEffect(category) {
         subcategory = subcategories.firstOrNull() ?: ""
     }
@@ -153,7 +155,7 @@ fun AddProductScreen(
             }
             Spacer(Modifier.height(10.dp))
 
-            if (!usesQuantity) {
+            if (!usesQuantity && !hideVariants) {
                 OutlinedTextField(
                     value = color,
                     onValueChange = { color = it },
@@ -196,13 +198,17 @@ fun AddProductScreen(
 
             Spacer(Modifier.height(10.dp))
 
-            OutlinedTextField(
-                value = shadeName,
-                onValueChange = { shadeName = it },
-                label = { Text(if (usesQuantity) "Cantitate (ml)" else "Nume nuanță") },
-                isError = attemptedSave && shadeName.isBlank(),
-                modifier = Modifier.fillMaxWidth()
-            )
+            if (!hideVariants) {
+                OutlinedTextField(
+                    value = shadeName,
+                    onValueChange = { shadeName = it },
+                    label = { Text(if (usesQuantity) "Cantitate (ml)" else "Nume nuanță") },
+                    isError = attemptedSave && shadeName.isBlank(),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(Modifier.height(10.dp))
+            }
 
             if (attemptedSave && shadeName.isBlank()) {
                 Text(
@@ -232,7 +238,7 @@ fun AddProductScreen(
                         brand.isBlank() ||
                         price.isBlank() ||
                         stock.isBlank() ||
-                        shadeName.isBlank()
+                        (!hideVariants && shadeName.isBlank())
                     ) {
                         message = "Completează numele, brandul, prețul, stocul și nuanța."
                         return@Button
@@ -254,13 +260,13 @@ fun AddProductScreen(
                         "price" to (price.toDoubleOrNull() ?: 0.0),
                         "description" to description,
                         "imageUrl" to imageUrl,
-                        "color" to if (usesQuantity) "#FFFFFF" else color,
+                        "color" to if (usesQuantity || hideVariants) "#FFFFFF" else color,
                         "isPopular" to isPopular,
                         "isOffer" to isOffer,
                         "rating" to (rating.toDoubleOrNull() ?: 0.0),
                         "stock" to (stock.toIntOrNull() ?: 0),
                         "productGroupId" to finalGroupId,
-                        "shadeName" to shadeName
+                        "shadeName" to if (hideVariants) "" else shadeName
                     )
 
                     db.collection("products")
