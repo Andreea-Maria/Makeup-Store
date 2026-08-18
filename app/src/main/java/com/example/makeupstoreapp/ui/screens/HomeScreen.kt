@@ -60,6 +60,7 @@ fun HomeScreen(
 ) {
     var selectedTab by remember { mutableStateOf(0) }
     var selectedProduct by remember { mutableStateOf<Product?>(null) }
+    var showTryOn by remember { mutableStateOf(false) }
     var showFavorites by remember { mutableStateOf(false) }
     var showOrders by remember { mutableStateOf(false) }
     var showCheckout by remember { mutableStateOf(false) }
@@ -72,6 +73,7 @@ fun HomeScreen(
     val productViewModel: ProductViewModel = viewModel()
     val cartViewModel: CartViewModel = viewModel()
     val favoritesViewModel: FavoritesViewModel = viewModel()
+
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
     val cartItems by cartViewModel.cartItems.collectAsState()
@@ -210,7 +212,14 @@ fun HomeScreen(
         ) {
             when (selectedTab) {
                 0 -> {
-                    if (productToEdit != null) {
+                    if (showTryOn) {
+                            TryOnScreen(
+                                product = selectedProduct!!,
+                                onBack = {
+                                    showTryOn = false
+                                }
+                            )
+                    } else if (productToEdit != null) {
                         EditProductScreen(
                             product = productToEdit!!,
                             onBack = { productToEdit = null },
@@ -255,6 +264,9 @@ fun HomeScreen(
                             isAdmin = isAdmin,
                             onEditProduct = { product ->
                                 productToEdit = product
+                            },
+                            onTryOn = {
+                                showTryOn = true
                             },
                             onShowMessage = { message ->
                                 coroutineScope.launch {

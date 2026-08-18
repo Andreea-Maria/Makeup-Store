@@ -36,6 +36,7 @@ fun ProductDetailsScreen(
     onAddToCart: (Product) -> Unit,
     isAdmin: Boolean,
     onEditProduct: (Product) -> Unit,
+    onTryOn: () -> Unit,
     onShowMessage: (String) -> Unit
 ) {
     val favoriteProducts by favoritesViewModel.favoriteProducts.collectAsState()
@@ -261,6 +262,18 @@ fun ProductDetailsScreen(
                 )
             ) {
                 Text(if (product.stock > 0) "Adaugă în coș" else "Indisponibil")
+            }
+
+            Spacer(Modifier.height(12.dp))
+
+            Button(
+                onClick = onTryOn,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp),
+                shape = RoundedCornerShape(18.dp)
+            ) {
+                Text("Try it on")
             }
 
             if (isAdmin) {
