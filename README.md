@@ -2,7 +2,9 @@
 
 ## Descriere
 
-Makeup Store App este o aplicație Android de tip e-commerce pentru produse cosmetice, dezvoltată în limbajul Kotlin folosind Jetpack Compose și Firebase. Aplicația permite utilizatorilor să își creeze un cont, să vizualizeze produsele disponibile, să le adauge în lista de favorite și în coșul de cumpărături, să plaseze comenzi și să beneficieze de reduceri prin scanarea codurilor QR. De asemenea, aplicația include un panou dedicat administratorului pentru gestionarea produselor, stocurilor și codurilor de reducere.
+Makeup Store App este o aplicație Android de tip e-commerce pentru produse cosmetice, dezvoltată în limbajul Kotlin folosind Jetpack Compose și Firebase. Aplicația permite utilizatorilor să își creeze un cont, să vizualizeze produsele disponibile, să le adauge în lista de favorite și în coșul de cumpărături, să plaseze comenzi și să beneficieze de reduceri prin scanarea codurilor QR.
+
+De asemenea, aplicația include o funcționalitate de tip Try-On, care permite aplicarea virtuală a produselor cosmetice pe o fotografie selectată de utilizator, precum și un panou dedicat administratorului pentru gestionarea produselor, stocurilor și codurilor de reducere.
 
 ---
 
@@ -47,11 +49,36 @@ https://github.com/Andreea-Maria/Makeup-Store.git
 - istoricul comenzilor;
 - profil utilizator;
 - suport pentru Dark Mode;
+- funcționalitate Try-On pentru aplicarea virtuală a produselor cosmetice pe o fotografie;
+- detectarea reperelor faciale cu MediaPipe Face Landmarker;
+- aplicarea virtuală a rujului, gloss-ului și creionului de buze;
+- aplicarea virtuală a fondului de ten și concealerului;
+- aplicarea virtuală a produselor pentru contouring și iluminator;
 - cont de administrator;
 - adăugarea produselor;
 - editarea produselor existente;
 - modificarea stocului;
 - administrarea codurilor de reducere.
+
+---
+
+## Funcționalitatea Try-On
+
+Aplicația include o funcționalitate de tip Try-On, care permite utilizatorului să vizualizeze efectul unor produse cosmetice direct pe o fotografie.
+
+Utilizatorul poate selecta o imagine, iar aplicația utilizează MediaPipe Face Landmarker pentru detectarea reperelor faciale. Pe baza coordonatelor obținute sunt identificate diferite regiuni ale feței, necesare pentru poziționarea efectelor cosmetice.
+
+Funcționalitatea permite aplicarea virtuală a următoarelor tipuri de produse:
+
+- ruj;
+- gloss;
+- creion de buze;
+- fond de ten;
+- concealer;
+- produse pentru contouring;
+- iluminator.
+
+Culorile și efectele sunt aplicate peste fotografia selectată în funcție de reperele faciale detectate.
 
 ---
 
@@ -64,6 +91,7 @@ https://github.com/Andreea-Maria/Makeup-Store.git
 - Firebase Storage
 - CameraX
 - Google ML Kit Barcode Scanning
+- MediaPipe Face Landmarker
 - Material Design 3
 - Coil
 
@@ -71,7 +99,7 @@ https://github.com/Andreea-Maria/Makeup-Store.git
 
 ## Structura aplicației
 
-Aplicația este alcătuită din următoarele ecrane:
+Aplicația este alcătuită din următoarele ecrane principale:
 
 - LoginScreen
 - RegisterScreen
@@ -84,10 +112,13 @@ Aplicația este alcătuită din următoarele ecrane:
 - FavoritesScreen
 - ProfileScreen
 - QRScreen
+- TryOnScreen
 - AdminScreen
 - AddProductScreen
 - EditProductScreen
 - AddDiscountScreen
+
+Pentru funcționalitatea Try-On este utilizată și clasa `FaceLandmarkerHelper`, responsabilă de procesarea imaginii și detectarea reperelor faciale cu ajutorul MediaPipe Face Landmarker.
 
 ---
 
@@ -142,7 +173,7 @@ Pentru compilarea aplicației sunt necesare:
 1. Se clonează repository-ul:
 
 ```bash
-https://github.com/Andreea-Maria/Makeup-Store.git
+git clone https://github.com/Andreea-Maria/Makeup-Store.git
 ```
 
 2. Se deschide proiectul în Android Studio.
@@ -185,6 +216,8 @@ sau
 
 - Pentru funcționalitatea de scanare QR este necesară acordarea permisiunii de utilizare a camerei.
 - Pentru testarea reducerilor pot fi utilizate atât introducerea manuală a codului, cât și scanarea unui cod QR care conține textul codului de reducere.
+- Funcționalitatea Try-On necesită selectarea unei fotografii în care fața utilizatorului este vizibilă.
+- Precizia poziționării efectelor cosmetice depinde de reperele faciale detectate în fotografia selectată.
 - Pentru funcționarea aplicației este necesară existența unei conexiuni la Internet, deoarece autentificarea și stocarea datelor se realizează prin serviciile Firebase.
 
 ---
